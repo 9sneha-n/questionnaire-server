@@ -1,4 +1,4 @@
-namespace questionnaire_server;
+namespace questionnaire_server.Models;
 
 public class Questionnaire {
     public int id {get; set;}

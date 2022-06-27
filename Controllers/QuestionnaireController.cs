@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-
+using questionnaire_server.Models;
+using System.Linq;
 
 namespace questionnaire_server.Controllers;
 [ApiController]
-[Route("[controller]")]
 public class QuestionnaireController : ControllerBase
 {
     //Initialize questions in in-memory 
@@ -64,27 +64,53 @@ public class QuestionnaireController : ControllerBase
                                                             }]
                                                             ";
 
-    private static List<Questionnaire>? Questions;
+    private List<Questionnaire>? Questions = JsonSerializer.Deserialize<List<Questionnaire>>(questionnaire_json);
 
     private readonly ILogger<QuestionnaireController> _logger;
 
     public QuestionnaireController(ILogger<QuestionnaireController> logger)
     {
         _logger = logger;
-        try
-        {
-            Questions = JsonSerializer.Deserialize<List<Questionnaire>>(questionnaire_json);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError("Error occured when deserializing questions : " + e.Message);
-        }
     }
 
-    [HttpGet(Name = "GetQuestions")]
+    [HttpGet("questionnaire")]
     public IEnumerable<Questionnaire> Get()
     {
-        _logger.LogInformation("Returning Questions for Questionnaire");
+        _logger.LogInformation("Reading Questions for Questionnaire");
         return Questions!;
+    }
+
+    [HttpGet("questionnaire/{id}")]
+    public IEnumerable<Questionnaire> Get(int id)
+    {
+        _logger.LogInformation("Reading Questions for Questionnaire");
+        return Questions!.Where(q => q.id == id);
+    }
+
+    [HttpPost("questionnaire/create")]
+    public void Create(Questionnaire question)
+    {
+        _logger.LogInformation("Adding Question to Questionnaire");
+        Questions!.Add(question);
+    }
+
+    [HttpDelete("questionnaire/delete/{id}")]
+    public void Delete(int id)
+    {
+        _logger.LogInformation("Deleting Question in Questionnaire");
+        var itemToDelete = Questions!.Where(q => q.id == id ).First();
+        Questions!.Remove(itemToDelete);
+    }
+
+
+    [HttpPut("questionnaire/update/{id}")]
+    public void Put(int id, Questionnaire question)
+    {
+        _logger.LogInformation("Updating Question in Questionnaire");
+        var itemToUpdate = Questions!.Where(q => q.id == id ).First();
+        itemToUpdate.id = question.id;
+        itemToUpdate.question = question.question;
+        itemToUpdate.options = question.options;
+
     }
 }
