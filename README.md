@@ -13,7 +13,7 @@ It exposes the following APIs :
 Download and install .NET 6 SDK : https://dotnet.microsoft.com/en-us/learn/aspnet/microservice-tutorial/install
 
 ## How to run locally
-git clone git@github.com:9sneha-n/questionnaire-server.git
+git clone git@github.com:9sneha-n/questionnaire-server.git \
 cd questionnaire-server
 ### `dotnet` : Check dotnet is installed correctly
 ### `dotnet build` : build the code
